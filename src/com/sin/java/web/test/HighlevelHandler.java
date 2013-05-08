@@ -2,7 +2,6 @@ package com.sin.java.web.test;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import com.sin.java.web.server.BaseHandler;
@@ -31,7 +30,8 @@ public class HighlevelHandler extends BaseHandler {
 			InputStream inputStream = new FileInputStream(file);
 			this.responseHeader.set("Content-Disposition", "attachment; filename=\""+filename+"\"");
 			this.responseStream(inputStream, -1, file.length());
-		} catch (FileNotFoundException e) {
+			inputStream.close();
+		} catch (Exception e) {
 			e.printStackTrace();
 			responseHeader.setCode(404);
 			responseHeader.setDescribe("Not Found");
