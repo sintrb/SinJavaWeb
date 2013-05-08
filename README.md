@@ -1,8 +1,8 @@
 SinJavaWeb
 ==========
 
-A simple Web Server implement by Java socket.
-==========
+A simple Web Server implemented by Java socket.
+----------
 
 Q:How To Run It?
 A:run com.sin.java.web.test.ServerTestMain.
