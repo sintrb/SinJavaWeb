@@ -12,6 +12,7 @@ import java.io.OutputStream;
  *         2013-5-7
  */
 public abstract class BaseHandler {
+	protected WebServer webServer;
 	protected RequestHeader requestHeader;
 	protected RequestBody requestBody;
 	protected ResponseHeader responseHeader;
@@ -59,23 +60,44 @@ public abstract class BaseHandler {
 		this.outputStream = outputStream;
 	}
 
+	public WebServer getWebServer() {
+		return webServer;
+	}
+
+	public void setWebServer(WebServer webServer) {
+		this.webServer = webServer;
+	}
+
 	// basic method
 	public void setContentType(String type) {
 		this.responseHeader.set("Content-Type", type);
 	}
-
+	public String getContentType() {
+		return this.responseHeader.get("Content-Type");
+	}
 	public void setContentLength(long len) {
 		this.responseHeader.set("Content-Length", "" + len);
 	}
 	protected void responseStream(InputStream inputStream){
 		responseStream(inputStream, -1, -1);
 	}
+	protected void responseStream(InputStream inputStream, String type){
+		try {
+			responseStream(inputStream, -1, inputStream.available(), type);
+		} catch (IOException e) {
+			webServer.err(e);
+		}
+	}
 	protected void responseStream(InputStream inputStream, long skip, long len){
-		responseStream(inputStream, skip, len, "application/x-compress");
+		responseStream(inputStream, skip, len, null);
 	}
 	protected void responseStream(InputStream inputStream, long skip, long len, String type) {
-		if(type != null)
+		if(type != null){
 			this.setContentType(type);
+		}
+		if(this.getContentType() == null){
+			this.setContentType("application/x-compress");
+		}
 		try {
 			if (skip > 0)
 				inputStream.skip(skip);
@@ -95,7 +117,7 @@ public abstract class BaseHandler {
 				outputStream.write(buf, 0, count);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			webServer.err(e);
 		}
 		this.responseed = true;
 	}

@@ -32,7 +32,7 @@ public class HighlevelHandler extends BaseHandler {
 			this.responseStream(inputStream, -1, file.length());
 			inputStream.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			webServer.err(e);
 			responseHeader.setCode(404);
 			responseHeader.setDescribe("Not Found");
 			res = "<h>404 Not Found</h>";

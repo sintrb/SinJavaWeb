@@ -41,7 +41,7 @@ public class ServerThread extends Thread {
 					break;
 				}
 				else{
-					e.printStackTrace();
+					webServer.err(e);
 				}
 			}
 		}

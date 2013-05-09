@@ -20,7 +20,7 @@ public class ResponseHeader extends BaseHeader {
 	public ResponseHeader() {
 		super();
 		this.set("Connection", "Keep-Alive");
-		this.set("Content-Type", "text/html; charset=UTF-8");
+//		this.set("Content-Type", "text/html; charset=UTF-8");
 //		this.set("Date", new Date().toString());
 		this.set("Server", "Sin Java WebServer");
 	}
