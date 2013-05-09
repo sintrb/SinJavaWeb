@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.sin.java.web.server.util.DateUtils;
+
 /**
  * The response header. ClientThread will add Content-Length field if handler
  * response is not null.
@@ -22,6 +24,7 @@ public class ResponseHeader extends BaseHeader {
 		this.set("Connection", "Keep-Alive");
 //		this.set("Content-Type", "text/html; charset=UTF-8");
 //		this.set("Date", new Date().toString());
+		this.set("Date", DateUtils.toGMTString());
 		this.set("Server", "Sin Java WebServer");
 	}
 

@@ -61,7 +61,11 @@ public class ClientThread extends Thread {
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(this.clientSocket.getInputStream()));
 			String l = br.readLine(); // method, path, protocol
+			if(l == null)
+				return; // connect break
 			String[] ss = l.split(" ");
+			if(ss.length != 3)
+				return; // not a HTTP request
 			requestHeader = new RequestHeader(ss[0], ss[1], ss[2]);
 			UrlregexMappingItem urlsMapItem = this.webServer.getHandler(requestHeader.getPath(), requestHeader.getMethod());
 			if (urlsMapItem != null) {

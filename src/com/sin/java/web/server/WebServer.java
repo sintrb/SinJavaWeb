@@ -61,6 +61,7 @@ public class WebServer {
 			this.serverThread.start();
 			return true;
 		} catch (IOException e) {
+			this.setStatus(Status.Stoped);
 			this.err(e);
 		}
 		return false;
@@ -69,7 +70,8 @@ public class WebServer {
 	public boolean stop() {
 		this.setStatus(Status.Stoped);
 		try {
-			this.serverSocket.close();
+			if (this.serverSocket != null)
+				this.serverSocket.close();
 		} catch (IOException e) {
 			this.err(e);
 		}
@@ -167,6 +169,7 @@ public class WebServer {
 		if (this.logger != null)
 			this.logger.err(e);
 	}
+
 	public void err(Exception e) {
 		if (this.logger != null)
 			this.logger.err(e);
