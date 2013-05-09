@@ -43,13 +43,13 @@ public class ClientThread extends Thread {
 				field.setAccessible(true);
 				field.set(obj, entry.getValue());
 			} catch (SecurityException e) {
-				e.printStackTrace();
+				webServer.err(e);
 			} catch (NoSuchFieldException e) {
-				e.printStackTrace();
+				webServer.err(e);
 			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
+				webServer.err(e);
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				webServer.err(e);
 			}
 
 		}
@@ -82,6 +82,7 @@ public class ClientThread extends Thread {
 				handler.setResponseHeader(new ResponseHeader());
 				handler.setResponseBody(new ResponseBody());
 				handler.setOutputStream(this.clientSocket.getOutputStream());
+				handler.setWebServer(webServer);
 				// inject fields
 				injectObject(handler, urlsMapItem.injectMap);
 
@@ -107,13 +108,16 @@ public class ClientThread extends Thread {
 					args = new Object[0];
 				}
 				// call handle
-//				log(requestHeader.toString());
+				log("Method=%s Path=%s Protocol=%s", requestHeader.getMethod(), requestHeader.getPath(), requestHeader.getProtocol());
 				String res = (String) handlerMethod.invoke(handler, args);
 
 				if (handler.responseed == false) {
 					if (res != null && handler.getResponseHeader().get("Content-Length") == null) {
 						byte[] bts = res.getBytes();
 						handler.setContentLength(bts.length);
+						if(handler.getContentType()==null){
+							handler.setContentType("text/html; charset=UTF-8");
+						}
 						this.clientSocket.getOutputStream().write(handler.getResponseHeader().getHeaderString().getBytes());
 						this.clientSocket.getOutputStream().write(bts);
 					} else {
@@ -124,13 +128,14 @@ public class ClientThread extends Thread {
 				throw new Exception(String.format("Unknow how to handle url(%s): %s ", requestHeader.getMethod(), requestHeader.getPath()));
 			}
 		} catch (Exception e) {
-			log(requestHeader.toString());
-			e.printStackTrace();
+			webServer.err(e);
+			if(requestHeader != null)
+				log(requestHeader.toString());
 		} finally {
 			try {
 				this.clientSocket.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				webServer.err(e);
 			}
 		}
 	}

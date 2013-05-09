@@ -19,10 +19,12 @@ public class WebServer {
 	}
 
 	private int port;
+	private UrlregexMapping urlsMapping;
+	private Logger logger;
+
 	private ServerSocket serverSocket;
 	private ServerThread serverThread;
 	private Status status = Status.Stoped;
-	private UrlregexMapping urlsMapping;
 
 	/**
 	 * Creates a WebServer by port
@@ -31,8 +33,24 @@ public class WebServer {
 	 *            The port of the server.
 	 */
 	public WebServer(int port) {
+		this(port, new UrlregexMapping(), new BaseLogger());
+	}
+
+	/**
+	 * 
+	 * @param port
+	 *            The port of the server.
+	 * @param urlsMapping
+	 *            The UrlregexMapping, it determine the handler of the request
+	 *            each request URL.
+	 * @param logger
+	 *            The Logger for the server.
+	 */
+	public WebServer(int port, UrlregexMapping urlsMapping, Logger logger) {
+		super();
 		this.port = port;
-		this.urlsMapping = new UrlregexMapping();
+		this.urlsMapping = urlsMapping;
+		this.logger = logger;
 	}
 
 	public boolean start() {
@@ -43,7 +61,7 @@ public class WebServer {
 			this.serverThread.start();
 			return true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			this.err(e);
 		}
 		return false;
 	}
@@ -53,7 +71,7 @@ public class WebServer {
 		try {
 			this.serverSocket.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			this.err(e);
 		}
 		return true;
 	}
@@ -78,12 +96,13 @@ public class WebServer {
 
 	public void setStatus(Status status) {
 		this.status = status;
-		log("status:%s", status.toString());
+		log("Server %s", status.toString());
 	}
 
 	public void addHandler(String urlregex, String handler) {
 		this.addHandler(urlregex, handler, null, "GET");
 	}
+
 	public void addHandler(String urlregex, String handler, Map<String, Object> injectMap) {
 		this.addHandler(urlregex, handler, injectMap, "GET");
 	}
@@ -103,8 +122,8 @@ public class WebServer {
 			}
 			Method[] handlerMethods = handlerClass.getMethods();
 			Method handlerMethod = null;
-			for(Method mt: handlerMethods){
-				if(mt.getName().equals(handlerMethodName)){
+			for (Method mt : handlerMethods) {
+				if (mt.getName().equals(handlerMethodName)) {
 					handlerMethod = mt;
 				}
 			}
@@ -117,7 +136,7 @@ public class WebServer {
 			UrlregexMappingItem urlHandlerItem = new UrlregexMappingItem(urlregex, method, handler, handlerClassName, handlerMethodName, injectMap);
 			this.urlsMapping.add(urlHandlerItem);
 		} catch (Exception e) {
-			e.printStackTrace();
+			this.err(e);
 		}
 	}
 
@@ -125,11 +144,35 @@ public class WebServer {
 		return this.urlsMapping.get(url, method);
 	}
 
-	public void log(String log) {
-		this.log("%s", log);
+	// for Logger
+	public void log(String l) {
+		if (this.logger != null)
+			this.logger.log(l);
 	}
 
 	public void log(String format, Object... args) {
-		System.out.println(String.format(format, args));
+		this.log(String.format(format, args));
+	}
+
+	public void inf(String i) {
+		if (this.logger != null)
+			this.logger.inf(i);
+	}
+
+	public void inf(String format, Object... args) {
+		this.inf(String.format(format, args));
+	}
+
+	public void err(String e) {
+		if (this.logger != null)
+			this.logger.err(e);
+	}
+	public void err(Exception e) {
+		if (this.logger != null)
+			this.logger.err(e);
+	}
+
+	public void err(String format, Object... args) {
+		this.err(String.format(format, args));
 	}
 }
