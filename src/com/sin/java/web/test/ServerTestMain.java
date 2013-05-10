@@ -27,9 +27,14 @@ public class ServerTestMain {
 		// download test page
 		server.addHandler("/dl/(.*)", "com.sin.java.web.test.HighlevelHandler.download");
 
+		// static file
+		Map<String, Object> injStatic = new HashMap<String, Object>();
+		injStatic.put("docroot", "./web");
+		// handle static file
+		server.addHandler("(/.*[.html|.js|.css|.png|.jpg|.gif])", "com.sin.java.web.server.handler.StaticHandler.handle", injStatic);
+		
 		// default test page
 		server.addHandler("/.*", "com.sin.java.web.test.HelloHandler.hello");
-
 		// start the server
 		server.start();
 
@@ -41,3 +46,17 @@ public class ServerTestMain {
 		// files folder
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
