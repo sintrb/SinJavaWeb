@@ -8,9 +8,15 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+/**
+ * 
+ * @author RobinTang
+ *
+ * 2013-5-9
+ */
 public class DateUtils {
-	public static final String FORMAT_GTM = "EEE,d MMM yyyy hh:mm:ss z";
-	public static final Locale LOCALE_GMT = Locale.ENGLISH;
+	public static final String FORMAT_GTM = "EEE,d MMM yyyy hh:mm:ss z";	// GTM string format
+	public static final Locale LOCALE_GMT = Locale.ENGLISH;	// The GTM locale London 
 	public static final String toGMTString(){
 		return toGMTString(new Date());
 	}

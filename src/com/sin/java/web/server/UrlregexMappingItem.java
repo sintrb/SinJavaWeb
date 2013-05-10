@@ -3,7 +3,7 @@ package com.sin.java.web.server;
 import java.util.Map;
 
 /**
- * The Item model if URL regular 
+ * The Item model of URL regular with request handler  
  * @author RobinTang
  *
  * 2013-5-8
