@@ -1,5 +1,6 @@
 package com.sin.java.web.server;
 
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -18,12 +19,11 @@ public class ResponseHeader extends BaseHeader {
 	private String protocol = "HTTP/1.0";
 	private int code = 200;
 	private String describe = "OK";
+	protected Map<String, Cookie> responseCookies = new Hashtable<String, Cookie>();
 
 	public ResponseHeader() {
 		super();
 		this.set("Connection", "Keep-Alive");
-//		this.set("Content-Type", "text/html; charset=UTF-8");
-//		this.set("Date", new Date().toString());
 		this.set("Date", DateUtils.toGMTString());
 		this.set("Server", "Sin Java WebServer");
 	}
@@ -35,6 +35,17 @@ public class ResponseHeader extends BaseHeader {
 		while (ir.hasNext()) {
 			Map.Entry<String, String> entry = (Map.Entry<java.lang.String, java.lang.String>) ir.next();
 			sb.append(String.format("%s: %s\n", entry.getKey(), entry.getValue()));
+		}
+		if (this.responseCookies.size() > 0) {
+
+			Iterator<Entry<String, Cookie>> ic = responseCookies.entrySet().iterator();
+			Entry<String, Cookie> sc = null;
+			
+			while (ic.hasNext()) {
+				sc = ic.next();
+				String ln = String.format("Set-Cookie: %s\n", sc.getValue().toSetString());
+				sb.append(ln);
+			}
 		}
 		sb.append('\n');
 		return sb.toString();
@@ -63,6 +74,5 @@ public class ResponseHeader extends BaseHeader {
 	public void setDescribe(String describe) {
 		this.describe = describe;
 	}
-	
-	
+
 }

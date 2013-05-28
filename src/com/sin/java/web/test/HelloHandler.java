@@ -15,6 +15,7 @@ public class HelloHandler extends BaseHandler {
 				"<a href=\"/inject\">Inject Test</a><br />" + 
 				"<a href=\"/args/Robin/23\">Arguments Test</a><br />" + 
 				"<a href=\"/dl/test.rar\" target=\"None\">Download Test</a><br />"+
+				"<a href=\"/cookie/\" target=\"None\">Cookie Test</a><br />"+
 				"<a href=\"/index.html\" target=\"None\">Static File, it's a simple site.</a><br />All pages from http://sc.chinaz.com/</center>";
 	}
 }

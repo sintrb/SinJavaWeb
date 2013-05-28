@@ -33,8 +33,14 @@ public class ServerTestMain {
 		// handle static file
 		server.addHandler("(/.*[.html|.js|.css|.png|.jpg|.gif])", "com.sin.java.web.server.handler.StaticHandler.handle", injStatic);
 		
+		
+		// cookie test page
+		server.addHandler("/cookie/.*", "com.sin.java.web.test.CookieSessionHandler.cookietest");
+		
 		// default test page
 		server.addHandler("/.*", "com.sin.java.web.test.HelloHandler.hello");
+		
+		
 		// start the server
 		server.start();
 
@@ -46,6 +52,7 @@ public class ServerTestMain {
 		// files folder
 	}
 }
+
 
 
 
