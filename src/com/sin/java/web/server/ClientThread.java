@@ -111,8 +111,8 @@ public class ClientThread extends Thread {
 					handlerMethod = handlerClass.getMethod(handlerMethodName);
 					args = new Object[0];
 				}
+				
 				// call handle
-				webServer.log("Method=%s Path=%s Protocol=%s", requestHeader.getMethod(), requestHeader.getPath(), requestHeader.getProtocol());
 				String res = (String) handlerMethod.invoke(handler, args);
 
 				if (handler.responseed == false) {
@@ -128,6 +128,8 @@ public class ClientThread extends Thread {
 						this.clientSocket.getOutputStream().write(handler.getResponseHeader().getHeaderString().getBytes());
 					}
 				}
+				
+				webServer.log("Method=%s Path=%s Protocol=%s %d", requestHeader.getMethod(), requestHeader.getPath(), requestHeader.getProtocol(), handler.getResponseHeader().getCode());
 			} else {
 				throw new Exception(String.format("Unknow how to handle url(%s): %s ", requestHeader.getMethod(), requestHeader.getPath()));
 			}
