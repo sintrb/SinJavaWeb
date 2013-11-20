@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.sin.java.web.server.BaseHandler;
+import com.sin.java.web.server.exception.WebException304NotModified;
+import com.sin.java.web.server.exception.WebException404NotFound;
 
 /**
  * A handler for static files. It handle for: .html .css .js .png .jpg .ico etc
@@ -40,27 +42,19 @@ public class StaticHandler extends BaseHandler {
 		if (ix >= 0 && (type = suffixToTypeMap.get(filename.substring(ix))) != null) {
 			String abspath = (docroot != null ? docroot + filename : filename);
 			File file = new File(abspath);
-			if (file.exists() && file.canRead()) {
+			if (file.exists() == false || file.canRead() == false)
+				throw new WebException404NotFound();
+			
+			String etag = requestHeader.get("If-None-Match");
+			String ntag = "abc" + file.lastModified() + "eee";
+			if (etag != null && etag.equals(ntag))
+				throw new WebException304NotModified();
 
-				String etag = requestHeader.get("If-None-Match");
-				String ntag = "" + file.lastModified();
-				if (etag != null && etag.equals(ntag)) {
-					// not modify
-					responseHeader.setCode(304);
-					responseHeader.setDescribe("Not Modified");
-					return res = "<center><strong>403 Not Modified.</strong></center>";
-				} else {
-					responseHeader.set("ETag", ntag);
-					FileInputStream fileInputStream = new FileInputStream(abspath);
-					responseStream(fileInputStream, type);
-					fileInputStream.close();
-				}
-			} else {
-				responseHeader.setCode(404);
-				responseHeader.setDescribe("Not Found");
-				res = "<center><strong>404 Not Found.</strong></center>";
-				webServer.log(res);
-			}
+			responseHeader.set("ETag", ntag);
+			FileInputStream fileInputStream = new FileInputStream(abspath);
+			responseStream(fileInputStream, type);
+			fileInputStream.close();
+
 		} else {
 			throw new Exception("Unknown file type when handle: " + filename);
 		}
