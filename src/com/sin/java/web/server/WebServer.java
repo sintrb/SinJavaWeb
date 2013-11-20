@@ -9,6 +9,12 @@ import java.util.Map;
  * A WebServer
  * <br /><br />
  * <strong>More infomation:</strong><a href="https://github.com/sintrb/SinJavaWeb">https://github.com/sintrb/SinJavaWeb</a>
+ * @version 0.2
+ * @author RobinTang
+ * 
+ *         2013-11-20
+ * 
+ * 
  * @version 0.1
  * @author RobinTang
  * 
@@ -18,7 +24,10 @@ public class WebServer {
 	/**
 	 * Web Server Version
 	 */
-	public static final String VERSION = "0.1";
+	public static final String VERSION = "0.2";
+	public static final String DATE = "2010-11-20";
+	
+	// public static final String VERSION = "0.1";
 
 	public enum Status {
 		Stoped, Running, Paused
