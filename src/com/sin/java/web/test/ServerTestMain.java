@@ -31,7 +31,7 @@ public class ServerTestMain {
 		Map<String, Object> injStatic = new HashMap<String, Object>();
 		injStatic.put("docroot", "./web");
 		// handle static file
-		server.addHandler("(/.*[.html|.js|.css|.png|.jpg|.gif])", "com.sin.java.web.server.handler.StaticHandler.handle", injStatic);
+		server.addHandler("(/.*[.html|.js|.css|.png|.jpg|.gif|.ico])", "com.sin.java.web.server.handler.StaticHandler.handle", injStatic);
 		
 		
 		// cookie test page
@@ -49,6 +49,7 @@ public class ServerTestMain {
 		// http://127.0.0.1:9011/inject inject test page
 		// http://127.0.0.1:9011/args/Robin/23 arguments test page
 		// http://127.0.0.1:9011/dl/test.rar download test page, download from
+		// http://127.0.0.1:9011/index.html open a simple website
 		// files folder
 	}
 }

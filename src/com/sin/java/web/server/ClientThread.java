@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.Iterator;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 /**
  * The thread to handle socket connect. Depend the request URL, it will dispatch
@@ -61,10 +63,10 @@ public class ClientThread extends Thread {
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(this.clientSocket.getInputStream()));
 			String l = br.readLine(); // method, path, protocol
-			if(l == null)
+			if (l == null)
 				return; // connect break
 			String[] ss = l.split(" ");
-			if(ss.length != 3)
+			if (ss.length != 3)
 				return; // not a HTTP request
 			requestHeader = new RequestHeader(ss[0], ss[1], ss[2]);
 			UrlregexMappingItem urlsMapItem = this.webServer.getHandler(requestHeader.getPath(), requestHeader.getMethod());
@@ -111,15 +113,24 @@ public class ClientThread extends Thread {
 					handlerMethod = handlerClass.getMethod(handlerMethodName);
 					args = new Object[0];
 				}
-				
-				// call handle
-				String res = (String) handlerMethod.invoke(handler, args);
 
+				// call handle
+				String res = null;
+				try {
+					res = (String) handlerMethod.invoke(handler, args);
+				} catch (InvocationTargetException e) {
+					if (BaseWebException.class.isInstance(e.getTargetException())) {
+						BaseWebException we = (BaseWebException) e.getTargetException();
+						handler.getResponseHeader().setCode(we.getCode());
+						handler.getResponseHeader().setDescribe(we.getDescribe());
+						res = we.getResponse();
+					}
+				}
 				if (handler.responseed == false) {
 					if (res != null && handler.getResponseHeader().get("Content-Length") == null) {
 						byte[] bts = res.getBytes();
 						handler.setContentLength(bts.length);
-						if(handler.getContentType()==null){
+						if (handler.getContentType() == null) {
 							handler.setContentType("text/html; charset=UTF-8");
 						}
 						this.clientSocket.getOutputStream().write(handler.getResponseHeader().getHeaderString().getBytes());
@@ -128,14 +139,14 @@ public class ClientThread extends Thread {
 						this.clientSocket.getOutputStream().write(handler.getResponseHeader().getHeaderString().getBytes());
 					}
 				}
-				
-				webServer.log("Method=%s Path=%s Protocol=%s %d", requestHeader.getMethod(), requestHeader.getPath(), requestHeader.getProtocol(), handler.getResponseHeader().getCode());
+
+				webServer.log("%s %s %s %d %s", requestHeader.getMethod(), requestHeader.getPath(), requestHeader.getProtocol(), handler.getResponseHeader().getCode(), handler.getResponseHeader().getDescribe());
 			} else {
 				throw new Exception(String.format("Unknow how to handle url(%s): %s ", requestHeader.getMethod(), requestHeader.getPath()));
 			}
 		} catch (Exception e) {
 			webServer.err(e);
-			if(requestHeader != null)
+			if (requestHeader != null)
 				webServer.log(requestHeader.toString());
 		} finally {
 			try {
