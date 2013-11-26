@@ -11,6 +11,9 @@
 
 
 ##### Change Log
+###### V1.0
+* add thread pool to handle client request
+
 ###### V0.2
 * using Exception style to response exception(reference from web.py)
 * add HTTP 304 and HTTP 404
