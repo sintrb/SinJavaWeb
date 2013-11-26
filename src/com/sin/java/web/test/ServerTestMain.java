@@ -2,6 +2,7 @@ package com.sin.java.web.test;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
 
 import com.sin.java.web.server.WebServer;
 
@@ -38,12 +39,11 @@ public class ServerTestMain {
 		server.addHandler("/cookie/.*", "com.sin.java.web.test.CookieSessionHandler.cookietest");
 		
 		
-		// cookie test page
-		server.addHandler("/cookie/.*", "com.sin.java.web.test.CookieSessionHandler.cookietest");
-		
 		// default test page
 		server.addHandler("/.*", "com.sin.java.web.test.HelloHandler.hello");
 		
+		// using thread pool to handle client request
+		server.setThreadpool(Executors.newScheduledThreadPool(20));
 		
 		// start the server
 		server.start();
