@@ -22,11 +22,11 @@ import java.util.regex.Pattern;
  * 
  *         2013-5-7
  */
-public class ClientThread extends Thread {
+public class ClientRunner implements Runnable {
 	private WebServer webServer;
 	private Socket clientSocket;
 
-	public ClientThread(WebServer webServer, Socket clientSocket) {
+	public ClientRunner(WebServer webServer, Socket clientSocket) {
 		super();
 		this.webServer = webServer;
 		this.clientSocket = clientSocket;
