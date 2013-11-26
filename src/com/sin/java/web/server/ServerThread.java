@@ -29,13 +29,13 @@ public class ServerThread extends Thread {
 			try {
 				Socket clientSocket = serverSocket.accept();
 				if (webServer.getStatus() == Status.Running) {
-					ClientThread clientThread = new ClientThread(webServer, clientSocket);
+					ClientRunner clientRunner = new ClientRunner(webServer, clientSocket);
 					if (webServer.getThreadPool() != null) {
 						// using thread pool
-						webServer.getThreadPool().execute(clientThread);
+						webServer.getThreadPool().execute(clientRunner);
 					} else {
 						// not use thread pool
-						clientThread.start();
+						new Thread(clientRunner).start();
 					}
 					// webServer.log("request from:%s",
 					// clientSocket.getRemoteSocketAddress().toString());
