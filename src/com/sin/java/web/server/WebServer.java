@@ -4,11 +4,15 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 /**
- * A WebServer
- * <br /><br />
- * <strong>More infomation:</strong><a href="https://github.com/sintrb/SinJavaWeb">https://github.com/sintrb/SinJavaWeb</a>
+ * A WebServer <br />
+ * <br />
+ * <strong>More infomation:</strong><a
+ * href="https://github.com/sintrb/SinJavaWeb"
+ * >https://github.com/sintrb/SinJavaWeb</a>
+ * 
  * @version 0.2
  * @author RobinTang
  * 
@@ -24,9 +28,12 @@ public class WebServer {
 	/**
 	 * Web Server Version
 	 */
-	public static final String VERSION = "0.2";
-	public static final String DATE = "2010-11-20";
-	
+	public static final String VERSION = "1.0";
+	public static final String DATE = "2013-11-26";
+
+	// public static final String VERSION = "0.2";
+	// public static final String DATE = "2013-11-20";
+
 	// public static final String VERSION = "0.1";
 
 	public enum Status {
@@ -40,6 +47,8 @@ public class WebServer {
 	private ServerSocket serverSocket;
 	private ServerThread serverThread;
 	private Status status = Status.Stoped;
+
+	private Executor threadPool = null;
 
 	/**
 	 * Creates a WebServer by port
@@ -115,12 +124,21 @@ public class WebServer {
 		this.status = status;
 		log("Server %s", status.toString());
 	}
+	
+	public void setThreadpool(Executor threadPool){
+		this.threadPool = threadPool;
+	}
+	
+	public Executor getThreadPool() {
+		return threadPool;
+	}
 
 	public void addHandler(String urlregex, String handler) {
 		this.addHandler(urlregex, handler, null, "GET");
 	}
 
-	public void addHandler(String urlregex, String handler, Map<String, Object> injectMap) {
+	public void addHandler(String urlregex, String handler,
+			Map<String, Object> injectMap) {
 		this.addHandler(urlregex, handler, injectMap, "GET");
 	}
 
@@ -128,14 +146,16 @@ public class WebServer {
 		this.addHandler(urlregex, handler, null, method);
 	}
 
-	public void addHandler(String urlregex, String handler, Map<String, Object> injectMap, String method) {
+	public void addHandler(String urlregex, String handler,
+			Map<String, Object> injectMap, String method) {
 		int ix = handler.lastIndexOf('.');
 		String handlerClassName = handler.substring(0, ix);
 		String handlerMethodName = handler.substring(ix + 1);
 		try {
 			Class<?> handlerClass = Class.forName(handlerClassName);
 			if (BaseHandler.class.isAssignableFrom(handlerClass) == false) {
-				throw new Exception(String.format("%s is not extends from %s.", handlerClassName, BaseHandler.class.getName()));
+				throw new Exception(String.format("%s is not extends from %s.",
+						handlerClassName, BaseHandler.class.getName()));
 			}
 			Method[] handlerMethods = handlerClass.getMethods();
 			Method handlerMethod = null;
@@ -145,12 +165,17 @@ public class WebServer {
 				}
 			}
 			if (handlerMethod == null) {
-				throw new Exception(String.format("%s has not method is named %s.", handlerClassName, handlerMethodName));
+				throw new Exception(String.format(
+						"%s has not method is named %s.", handlerClassName,
+						handlerMethodName));
 			}
 			if (String.class.isAssignableFrom(handlerMethod.getReturnType()) == false) {
-				throw new Exception(String.format("%s return type is not String.", handler));
+				throw new Exception(String.format(
+						"%s return type is not String.", handler));
 			}
-			UrlregexMappingItem urlHandlerItem = new UrlregexMappingItem(urlregex, method, handler, handlerClassName, handlerMethodName, injectMap);
+			UrlregexMappingItem urlHandlerItem = new UrlregexMappingItem(
+					urlregex, method, handler, handlerClassName,
+					handlerMethodName, injectMap);
 			this.urlsMapping.add(urlHandlerItem);
 		} catch (Exception e) {
 			this.err(e);

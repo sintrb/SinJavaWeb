@@ -6,12 +6,12 @@ import java.net.Socket;
 
 import com.sin.java.web.server.WebServer.Status;
 
-
 /**
  * A thread to handle socket connect request.
+ * 
  * @author RobinTang
- *
- * 2013-5-7
+ * 
+ *         2013-5-7
  */
 public class ServerThread extends Thread {
 	private WebServer webServer;
@@ -30,17 +30,22 @@ public class ServerThread extends Thread {
 				Socket clientSocket = serverSocket.accept();
 				if (webServer.getStatus() == Status.Running) {
 					ClientThread clientThread = new ClientThread(webServer, clientSocket);
-					clientThread.start();
-//					webServer.log("request from:%s", clientSocket.getRemoteSocketAddress().toString());
-				}
-				else if(webServer.getStatus() == Status.Paused){
+					if (webServer.getThreadPool() != null) {
+						// using thread pool
+						webServer.getThreadPool().execute(clientThread);
+					} else {
+						// not use thread pool
+						clientThread.start();
+					}
+					// webServer.log("request from:%s",
+					// clientSocket.getRemoteSocketAddress().toString());
+				} else if (webServer.getStatus() == Status.Paused) {
 					clientSocket.close();
 				}
 			} catch (IOException e) {
-				if(webServer.getStatus() == Status.Stoped){
+				if (webServer.getStatus() == Status.Stoped) {
 					break;
-				}
-				else{
+				} else {
 					webServer.err(e);
 				}
 			}
