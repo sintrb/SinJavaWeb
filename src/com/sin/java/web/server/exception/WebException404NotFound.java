@@ -5,7 +5,7 @@ import com.sin.java.web.server.BaseWebException;
 /**
  * HTTP 404 Not Found <br/>
  * 
- * @author trb
+ * @author RobinTang
  * @date 2013-11-20
  */
 public class WebException404NotFound extends BaseWebException {

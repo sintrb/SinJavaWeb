@@ -3,9 +3,9 @@ package com.sin.java.web.server.exception;
 import com.sin.java.web.server.BaseWebException;
 
 /**
- * HTTP 304 Nof Modified <br/>
+ * HTTP 304 Not Modified <br/>
  * 
- * @author trb
+ * @author RobinTang
  * @date 2013-11-20
  */
 public class WebException304NotModified extends BaseWebException {
