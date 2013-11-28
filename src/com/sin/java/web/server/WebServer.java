@@ -28,8 +28,11 @@ public class WebServer {
 	/**
 	 * Web Server Version
 	 */
-	public static final String VERSION = "1.0";
-	public static final String DATE = "2013-11-26";
+	public static final String VERSION = "1.1";
+	public static final String DATE = "2013-11-28";
+
+	// public static final String VERSION = "1.0";
+	// public static final String DATE = "2013-11-26";
 
 	// public static final String VERSION = "0.2";
 	// public static final String DATE = "2013-11-20";
@@ -41,6 +44,7 @@ public class WebServer {
 	}
 
 	private int port;
+	private String name = "Sin WebServer V" + VERSION;
 	private UrlregexMapping urlsMapping;
 	private Logger logger;
 
@@ -85,6 +89,7 @@ public class WebServer {
 	 */
 	public boolean start() {
 		try {
+			log("Starting %s at port %d ...", name, port);
 			this.serverSocket = new ServerSocket(port);
 			this.setStatus(Status.Running);
 			this.serverThread = new ServerThread(this);
@@ -92,6 +97,7 @@ public class WebServer {
 			return true;
 		} catch (IOException e) {
 			this.setStatus(Status.Stoped);
+			log("Start server fail!", name, port);
 			this.err(e);
 		}
 		return false;
@@ -276,9 +282,25 @@ public class WebServer {
 	public UrlregexMappingItem getHandler(String url, String method) {
 		return this.urlsMapping.get(url, method);
 	}
-	
-	
-	
+
+	/**
+	 * Get server name
+	 * 
+	 * @return Server Name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Set server name
+	 * 
+	 * @param name
+	 *            server name
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	// for Logger
 	/**
@@ -361,5 +383,3 @@ public class WebServer {
 		this.err(String.format(format, args));
 	}
 }
-
-
