@@ -38,9 +38,12 @@ public class ServerTestMain {
 		// cookie test page
 		server.addHandler("/cookie/.*", "com.sin.java.web.test.CookieSessionHandler.cookietest");
 		
+		// HTTP Basic Authorize
+		server.addHandler("/auth/", "com.sin.java.web.test.HTTPAuthHandler.handle");
 		
 		// default test page
-		server.addHandler("/.*", "com.sin.java.web.test.HelloHandler.hello");
+		server.addHandler("/.*", "com.sin.java.web.test.HelloHandler.hello");	
+	
 		
 		// using thread pool to handle client request
 		server.setThreadpool(Executors.newScheduledThreadPool(20));
@@ -54,6 +57,7 @@ public class ServerTestMain {
 		// http://127.0.0.1:9011/args/Robin/23 arguments test page
 		// http://127.0.0.1:9011/dl/test.rar download test page, download from
 		// http://127.0.0.1:9011/index.html open a simple website
+		// http://127.0.0.1:9011/auth/ HTTP Basic Authorize test page
 		// files folder
 	}
 }
