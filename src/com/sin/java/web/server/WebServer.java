@@ -13,15 +13,25 @@ import java.util.concurrent.Executor;
  * href="https://github.com/sintrb/SinJavaWeb"
  * >https://github.com/sintrb/SinJavaWeb</a>
  * 
+ * @version 1.1
+ * @author RobinTang
+ *         HTTP Basic Authorize(401)
+ *         2013-11-28
+ * 
+ * @version 1.0
+ * @author RobinTang
+ *         Using thread pool
+ *         2013-11-26
+ *         
  * @version 0.2
  * @author RobinTang
- * 
+ *         HTTP 304, 404
  *         2013-11-20
  * 
  * 
  * @version 0.1
  * @author RobinTang
- * 
+ *         Base version
  *         2013-5-7
  */
 public class WebServer {
