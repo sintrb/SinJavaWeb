@@ -13,6 +13,11 @@ import java.util.concurrent.Executor;
  * href="https://github.com/sintrb/SinJavaWeb"
  * >https://github.com/sintrb/SinJavaWeb</a>
  * 
+ * @version 1.1.1
+ * @author RobinTang
+ *         Change remove response header "Connection: Keep-Alive"
+ *         2014-11-02
+ *         
  * @version 1.1
  * @author RobinTang
  *         HTTP Basic Authorize(401)

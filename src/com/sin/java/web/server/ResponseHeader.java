@@ -23,7 +23,7 @@ public class ResponseHeader extends BaseHeader {
 
 	public ResponseHeader() {
 		super();
-		this.set("Connection", "Keep-Alive");
+//		this.set("Connection", "Keep-Alive"); // only close
 		this.set("Date", DateUtils.toGMTString());
 		this.set("Server", "Sin Java WebServer");
 	}
