@@ -8,5 +8,9 @@ package com.sin.java.web.server;
  *         2013-5-7
  */
 public class RequestBody {
+	public byte[] data;
 
+	public String getString() {
+		return new String(data);
+	}
 }
