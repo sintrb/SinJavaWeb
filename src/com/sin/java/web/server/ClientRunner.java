@@ -1,18 +1,17 @@
 package com.sin.java.web.server;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 
 /**
  * The thread to handle socket connect. Depend the request URL, it will dispatch
@@ -57,12 +56,37 @@ public class ClientRunner implements Runnable {
 		}
 	}
 
+	private String readLineFromStream(InputStream is) {
+		ArrayList<Byte> bts = new ArrayList<Byte>();
+		try {
+			while (true) {
+				int r = is.read();
+				if (r == '\n')
+					break;
+				else if (r != '\r')
+					bts.add((byte) r);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if (bts.size() == 0) {
+			return null;
+		} else {
+			byte[] dats = new byte[bts.size()];
+			for (int i = 0; i < dats.length; i++) {
+				dats[i] = bts.get(i);
+			}
+			return new String(dats);
+		}
+	}
+
 	@Override
 	public void run() {
 		RequestHeader requestHeader = null;
 		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(this.clientSocket.getInputStream()));
-			String l = br.readLine(); // method, path, protocol
+			InputStream inputStream = this.clientSocket.getInputStream();
+			String l = readLineFromStream(inputStream); // method, path,
+														// protocol
 			if (l == null)
 				return; // connect break
 			String[] ss = l.split(" ");
@@ -71,9 +95,20 @@ public class ClientRunner implements Runnable {
 			requestHeader = new RequestHeader(ss[0], ss[1], ss[2]);
 			UrlregexMappingItem urlsMapItem = this.webServer.getHandler(requestHeader.getPath(), requestHeader.getMethod());
 			if (urlsMapItem != null) {
-				while ((l = br.readLine()) != null && l.length() > 0) {
+				while ((l = readLineFromStream(inputStream)) != null && l.length() > 0) {
 					int i = l.indexOf(':');
 					requestHeader.set(l.substring(0, i).trim(), l.substring(i + 1).trim());
+				}
+
+				RequestBody requestBody = new RequestBody();
+				if (requestHeader.containsKey("Content-Length")) {
+					int len = Integer.parseInt(requestHeader.get("Content-Length"));
+					byte[] buf = new byte[len];
+					int ix = 0;
+					while (ix < len) {
+						ix += inputStream.read(buf, ix, len - ix);
+					}
+					requestBody.data = buf;
 				}
 				String handlerClassName = urlsMapItem.handlerClassName;
 				String handlerMethodName = urlsMapItem.handlerMethodName;
@@ -84,7 +119,7 @@ public class ClientRunner implements Runnable {
 
 				// base member fields
 				handler.setRequestHeader(requestHeader);
-				handler.setRequestBody(new RequestBody());
+				handler.setRequestBody(requestBody);
 				handler.setResponseHeader(new ResponseHeader());
 				handler.setResponseBody(new ResponseBody());
 				handler.setOutputStream(this.clientSocket.getOutputStream());
@@ -139,8 +174,10 @@ public class ClientRunner implements Runnable {
 						this.clientSocket.getOutputStream().write(handler.getResponseHeader().getHeaderString().getBytes());
 					}
 				}
-
 				webServer.log("%s %s %s %d %s", requestHeader.getMethod(), requestHeader.getPath(), requestHeader.getProtocol(), handler.getResponseHeader().getCode(), handler.getResponseHeader().getDescribe());
+
+				// close stream
+				inputStream.close();
 			} else {
 				throw new Exception(String.format("Unknow how to handle url(%s): %s ", requestHeader.getMethod(), requestHeader.getPath()));
 			}
