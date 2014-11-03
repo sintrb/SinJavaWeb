@@ -20,4 +20,8 @@ public class BaseHeader {
 	public String get(String k) {
 		return this.header.get(k);
 	}
+	
+	public boolean containsKey(String k){
+		return this.header.containsKey(k);
+	}
 }
