@@ -61,7 +61,9 @@ public class ClientRunner implements Runnable {
 		try {
 			while (true) {
 				int r = is.read();
-				if (r == '\n')
+				if (r == -1)
+					break;
+				else if (r == '\n')
 					break;
 				else if (r != '\r')
 					bts.add((byte) r);
@@ -159,6 +161,10 @@ public class ClientRunner implements Runnable {
 						handler.getResponseHeader().setCode(we.getCode());
 						handler.getResponseHeader().setDescribe(we.getDescribe());
 						res = we.getResponse();
+					} else if (e.getCause() instanceof Exception) {
+						throw (Exception) e.getCause();
+					} else {
+						webServer.err(e.getMessage());
 					}
 				}
 				if (handler.responseed == false) {

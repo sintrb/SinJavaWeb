@@ -123,7 +123,11 @@ public abstract class BaseHandler {
 	}
 
 	protected void responseStream(InputStream inputStream) {
-		responseStream(inputStream, -1, -1);
+		try {
+			responseStream(inputStream, -1, inputStream.available());
+		} catch (Exception e) {
+			webServer.err(e);
+		}
 	}
 
 	protected void responseStream(InputStream inputStream, String type) {
