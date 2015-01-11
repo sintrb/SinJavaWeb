@@ -24,7 +24,7 @@ public class UrlregexMapping {
 		int count = size();
 		for (int i = 0; i < count; ++i) {
 			UrlregexMappingItem item = this.mapitems.get(i);
-			if (item.method.equals(method) && url.matches(item.urlregex)) {
+			if ((item.method == null || item.method.equals(method)) && url.matches(item.urlregex)) {
 				return this.mapitems.get(i);
 			}
 		}

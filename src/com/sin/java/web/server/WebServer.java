@@ -210,7 +210,7 @@ public class WebServer {
 	 *            "com.sin.web.ApiHanlder.getuser"
 	 */
 	public void addHandler(String urlregex, String handler) {
-		this.addHandler(urlregex, handler, null, "GET");
+		this.addHandler(urlregex, handler, null, null);
 	}
 
 	/**
@@ -225,7 +225,7 @@ public class WebServer {
 	 *            inject variable mapping
 	 */
 	public void addHandler(String urlregex, String handler, Map<String, Object> injectMap) {
-		this.addHandler(urlregex, handler, injectMap, "GET");
+		this.addHandler(urlregex, handler, injectMap, null);
 	}
 
 	/**
@@ -254,7 +254,7 @@ public class WebServer {
 	 *            request handler, contain class and method, f.e.
 	 *            "com.sin.web.ApiHanlder.getuser"
 	 * @param method
-	 *            HTTP method, f.e: GET POST PUT etc, default is GET
+	 *            HTTP method, f.e: GET POST PUT etc, default is All
 	 */
 	public void addHandler(String urlregex, String handler, Map<String, Object> injectMap, String method) {
 		int ix = handler.lastIndexOf('.');
