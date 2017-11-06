@@ -169,7 +169,7 @@ public class ClientRunner implements Runnable {
 				}
 				if (handler.responseed == false) {
 					if (res != null && handler.getResponseHeader().get("Content-Length") == null) {
-						byte[] bts = res.getBytes();
+						byte[] bts = res.getBytes("UTF-8");
 						handler.setContentLength(bts.length);
 						if (handler.getContentType() == null) {
 							handler.setContentType("text/html; charset=UTF-8");

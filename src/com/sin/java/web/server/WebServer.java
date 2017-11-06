@@ -2,6 +2,7 @@ package com.sin.java.web.server;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -12,6 +13,11 @@ import java.util.concurrent.Executor;
  * <strong>More infomation:</strong><a
  * href="https://github.com/sintrb/SinJavaWeb"
  * >https://github.com/sintrb/SinJavaWeb</a>
+ * 
+ * @version 1.1.2
+ * @author RobinTang
+ *         add bind address
+ *         2017-11-06
  * 
  * @version 1.1.1
  * @author RobinTang
@@ -43,8 +49,10 @@ public class WebServer {
 	/**
 	 * Web Server Version
 	 */
-	public static final String VERSION = "1.1";
-	public static final String DATE = "2013-11-28";
+	public static final String VERSION = "1.2";
+	public static final String DATE = "2017-11-06";
+	// public static final String VERSION = "1.1";
+	// public static final String DATE = "2013-11-28";
 
 	// public static final String VERSION = "1.0";
 	// public static final String DATE = "2013-11-26";
@@ -59,6 +67,7 @@ public class WebServer {
 	}
 
 	private int port;
+	private InetAddress bindAddr;
 	private String name = "Sin WebServer V" + VERSION;
 	private UrlregexMapping urlsMapping;
 	private Logger logger;
@@ -105,7 +114,10 @@ public class WebServer {
 	public boolean start() {
 		try {
 			log("Starting %s at port %d ...", name, port);
-			this.serverSocket = new ServerSocket(port);
+			if (this.bindAddr == null)
+				this.serverSocket = new ServerSocket(port);
+			else
+				this.serverSocket = new ServerSocket(port, 50, this.bindAddr);
 			this.setStatus(Status.Running);
 			this.serverThread = new ServerThread(this);
 			this.serverThread.start();
@@ -315,6 +327,14 @@ public class WebServer {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public InetAddress getBindAddr() {
+		return bindAddr;
+	}
+
+	public void setBindAddr(InetAddress bindAddr) {
+		this.bindAddr = bindAddr;
 	}
 
 	// for Logger
